@@ -10,13 +10,12 @@ if __name__ == "__main__":
         client = MongoClient()
         db = client["logs"]
         col = db["nginx"]
-
         methods = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE']
-
         # Print output given in example
         print(col.count_documents({}), "logs")
 
         print("Methods:")
+
         for method in methods:
             logs = col.count_documents({"method": method})
             print("\tmethod {}: {}".format(method, logs))
@@ -24,6 +23,5 @@ if __name__ == "__main__":
         print(col.count_documents(
             {"method": "GET", "path": "/status"}), "status check")
 
-
-# call main function
+        # call main function
     log_stats()
