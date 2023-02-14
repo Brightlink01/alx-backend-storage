@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-""" update document"""
+""" Pymongo collection object"""
 from pymongo import MongoClient
 
 
-def update_topics(mongo_collection, name, topics):
-    """Updates dcuments in a colleciton"""
-    qry = {"name": name}
-    newvars = {"$set": {"topics": topics}}
-    mongo_collection.update_many(qry, newvars)
+def insert_school(mongo_collection, **kwargs):
+    """ inserts a new document into a collection"""
+    if len(kwargs) == 0:
+        return None
+    return mongo_collection.insert(kwargs)
