@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
-""" pymongo list"""
+""" update document"""
 from pymongo import MongoClient
 
 
-def schools_by_topic(mongo_collection, topic):
-    """ return a list of documents from collection"""
-    return list(mongo_collection.find({"topics": topic}))
+def update_topics(mongo_collection, name, topics):
+    """Updates dcuments in a colleciton"""
+    qry = {"name": name}
+    newvars = {"$set": {"topics": topics}}
+    mongo_collection.update_many(qry, newvars)
