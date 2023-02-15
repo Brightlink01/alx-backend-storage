@@ -1,2 +1,0 @@
-// list  documents that that match a name
-db.school.find({"name" : "Holberton school"})
