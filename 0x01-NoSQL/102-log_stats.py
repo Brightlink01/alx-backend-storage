@@ -1,49 +1,28 @@
 #!/usr/bin/env python3
-"""  provides stats about nginx"""
+"""
+this module contains a Python script that provides some stats about Nginx logs
+"""
+from pymongo import MongoClient
+
+
+def log_stats(mongo_collection):
+    """
+    this function provides some stats about Nginx logs stored in MongoDB
+    """
+    total_logs = mongo_collection.count_documents({})
+    print("{} logs".format(total_logs))
+    print("Methods:")
+    methods = ["GET", "POST", "PUT", "PATCH", "DELETE"]
+    for method in methods:
+        documents = mongo_collection.count_documents({"method": method})
+        print("\tmethod {}: {}".format(method, documents))
+    status = mongo_collection.count_documents({"method": "GET",
+                                               "path": "/status"})
+    print("{} status check".format(status))
+
 
 if __name__ == "__main__":
-    from pymongo import MongoClient
-
-
-    def log_stats():
-        """provides stats about Nginx logs stored in MongoDB"""
-        # Connect databse
-        client = MongoClient()
-        db = client["logs"]
-        col = db["nginx"]
-
-        methods = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE']
-
-        # Print output given in example
-        print(col.count_documents({}), "logs")
-
-        print("Methods:")
-        for method in methods:
-            logs = col.count_documents({"method": method})
-            print("\tmethod {}: {}".format(method, logs))
-
-        print(col.count_documents(
-            {"method": "GET", "path": "/status"}), "status check")
-
-        print("IPs:")
-        top_ips = col.aggregate([
-            {"$group":
-                {
-                    "_id": "$ip",
-                    "count": {"$sum": 1}
-                    }
-                },
-            {"$sort": {"count": -1}},
-            {"$limit": 10},
-            {"$project": {
-                "_id": 0,
-                "ip": "$_id",
-                "count": 1
-                }}
-            ])
-        for ip in top_ips:
-            print(f"\t{ip.get('ip')}: {ip.get('count')}")
-
-
-# call main function
-    log_stats()
+    with MongoClient() as client:
+        db = client.logs
+        collection = db.nginx
+        log_stats(collection)
